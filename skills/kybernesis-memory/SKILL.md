@@ -106,6 +106,10 @@ When the user mentions syncing Google Drive, Notion, or other connected services
 
 ## Not Connected
 
-If the MCP tools return errors about missing API keys or authentication:
+If the MCP tools return errors about authentication or connection:
 
-Tell the user: "Your Kybernesis workspace isn't connected yet. Run `/kybernesis-setup` to authenticate, or visit https://kybernesis.ai/settings to get your API key."
+- **Claude Desktop**: The OAuth flow should start automatically when you first use a Kybernesis tool. If it doesn't, try removing and re-adding the plugin, then use any memory tool to trigger sign-in.
+- **Claude Code / Cowork**: Run `/kybernesis-setup` to authenticate with an API key.
+- **Manual setup**: Visit https://kybernesis.ai/settings to get an API key and set the `KYBERNESIS_API_KEY` environment variable.
+
+Tell the user which option applies to their environment.
