@@ -1,0 +1,15 @@
+{
+  "name": "kybernesis-plugin",
+  "description": "Official Kybernesis plugin — persistent AI memory across conversations",
+  "owner": {
+    "name": "Kybernesis",
+    "url": "https://kybernesis.ai"
+  },
+  "plugins": [
+    {
+      "name": "kybernesis",
+      "source": "./",
+      "description": "Save and recall knowledge across conversations. Your AI memory layer that grows with you."
+    }
+  ]
+}

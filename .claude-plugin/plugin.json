@@ -1,0 +1,13 @@
+{
+  "name": "kybernesis",
+  "version": "2.0.0",
+  "description": "Your AI memory layer. Save and recall knowledge across conversations — remember what matters, find what you need.",
+  "author": {
+    "name": "Kybernesis",
+    "url": "https://kybernesis.ai"
+  },
+  "homepage": "https://kybernesis.ai",
+  "repository": "https://github.com/KybernesisAI/kybernesis-plugin",
+  "license": "MIT",
+  "keywords": ["memory", "knowledge", "recall", "personal-ai"]
+}
