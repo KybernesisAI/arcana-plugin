@@ -19,29 +19,25 @@ import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { homedir } from 'os';
 
-const MCP_SERVER_URL = process.env.MCP_SERVER_URL || 'https://api.kybernesis.ai/mcp';
+const MCP_SERVER_URL = process.env.MCP_SERVER_URL || 'https://mcp.arcana.kybernesis.ai/mcp';
 const API_KEY_FILE = join(homedir(), '.kybernesis', 'api-key');
+const WORKSPACE_FILE = join(homedir(), '.kybernesis', 'workspace');
 
-function resolveApiKey() {
-  // 1. Environment variable
-  if (process.env.KYBERNESIS_API_KEY) {
-    return process.env.KYBERNESIS_API_KEY;
-  }
-
-  // 2. File-based key
-  if (existsSync(API_KEY_FILE)) {
+function resolveFromEnvOrFile(envVar, filePath) {
+  if (process.env[envVar]) return process.env[envVar];
+  if (existsSync(filePath)) {
     try {
-      const key = readFileSync(API_KEY_FILE, 'utf-8').trim();
-      if (key) return key;
+      const v = readFileSync(filePath, 'utf-8').trim();
+      if (v) return v;
     } catch {
-      // Fall through
+      // fall through
     }
   }
-
   return null;
 }
 
-const API_KEY = resolveApiKey();
+const API_KEY = resolveFromEnvOrFile('KYBERNESIS_API_KEY', API_KEY_FILE);
+const WORKSPACE = resolveFromEnvOrFile('KYBERNESIS_WORKSPACE', WORKSPACE_FILE);
 
 const rl = createInterface({
   input: process.stdin,
@@ -52,15 +48,15 @@ const rl = createInterface({
 let sessionId = null;
 
 async function forwardMessage(message) {
-  if (!API_KEY) {
+  if (!API_KEY || !WORKSPACE) {
     return {
       jsonrpc: '2.0',
       id: message.id,
       error: {
         code: -32603,
         message:
-          'Kybernesis API key not found. Run /kybernesis-setup to authenticate, ' +
-          'or set the KYBERNESIS_API_KEY environment variable.',
+          'Arcana credentials not found. Run /kybernesis-setup to authenticate, ' +
+          'or set KYBERNESIS_API_KEY and KYBERNESIS_WORKSPACE environment variables.',
       },
     };
   }
@@ -70,6 +66,7 @@ async function forwardMessage(message) {
       'Content-Type': 'application/json',
       Accept: 'application/json, text/event-stream',
       Authorization: `Bearer ${API_KEY}`,
+      'X-Kyberagent-Agent': WORKSPACE,
     };
 
     if (sessionId) {
@@ -98,8 +95,8 @@ async function forwardMessage(message) {
           error: {
             code: -32603,
             message:
-              'Kybernesis API key is invalid or expired. ' +
-              'Get a new key at https://kybernesis.ai/settings and run /kybernesis-setup.',
+              'Arcana API key is invalid or expired. ' +
+              'Get a new key at https://arcana.kybernesis.ai/settings/api-keys and run /kybernesis-setup.',
           },
         };
       }

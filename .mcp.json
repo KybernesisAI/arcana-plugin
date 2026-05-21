@@ -2,7 +2,11 @@
   "mcpServers": {
     "kybernesis": {
       "type": "http",
-      "url": "https://api.kybernesis.ai/mcp"
+      "url": "https://mcp.arcana.kybernesis.ai/mcp",
+      "headers": {
+        "Authorization": "Bearer ${KYBERNESIS_API_KEY}",
+        "X-Kyberagent-Agent": "${KYBERNESIS_WORKSPACE}"
+      }
     }
   }
 }
