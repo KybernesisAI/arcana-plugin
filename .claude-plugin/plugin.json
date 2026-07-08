@@ -1,13 +1,13 @@
 {
-  "name": "kybernesis",
-  "version": "3.0.0",
-  "description": "Cloud brain. Same memory as KyberAgent local, anywhere — persistent entity graph, timeline, fact store, and semantic search across every conversation.",
+  "name": "arcana",
+  "version": "3.1.0",
+  "description": "Arcana cloud brain by Kybernesis. Same memory as KyberAgent local, anywhere — persistent entity graph, timeline, fact store, and semantic search across every conversation.",
   "author": {
     "name": "Kybernesis",
     "url": "https://arcana.kybernesis.ai"
   },
   "homepage": "https://arcana.kybernesis.ai",
-  "repository": "https://github.com/KybernesisAI/kybernesis-plugin",
+  "repository": "https://github.com/KybernesisAI/arcana-plugin",
   "license": "MIT",
-  "keywords": ["memory", "knowledge", "recall", "kyberagent", "arcana", "personal-ai"]
+  "keywords": ["memory", "knowledge", "recall", "arcana", "kyberagent", "kybernesis", "personal-ai"]
 }

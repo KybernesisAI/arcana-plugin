@@ -1,14 +1,14 @@
 ---
-name: kybernesis-recall
+name: arcana-recall
 description: "Look up what is known about a person, project, company, place, or topic from the workspace brain. Use proactively whenever the user mentions someone by name, references a project or company, asks about past interactions, or says who is, what do we know about, tell me about, or recall."
-allowed-tools: mcp__kybernesis__kybernesis_recall, mcp__kybernesis__kybernesis_timeline, mcp__kybernesis__kybernesis_search
+allowed-tools: mcp__arcana__kybernesis_recall, mcp__arcana__kybernesis_timeline, mcp__arcana__kybernesis_search
 ---
 
 # Recall — Primary Memory Retrieval
 
 This is the **primary memory retrieval path**. The Arcana brain (entity graph, timeline, fact store, embeddings) is the authoritative knowledge store — richer and more complete than any auto-memory file. When the user asks about anything stored in memory, this skill is the correct way to retrieve it.
 
-This is the read counterpart to `kybernesis-remember` — together they give the session full bidirectional memory.
+This is the read counterpart to `arcana-remember` — together they give the session full bidirectional memory.
 
 ## When to Fire
 
@@ -95,4 +95,4 @@ kybernesis_search({ query: "PostgreSQL decision rationale" })
 
 - Combine `recall` (entity graph) with `timeline` (temporal) and `search` (semantic) for the most complete picture.
 - If recall returns multiple matches, use the most relevant one based on conversation context.
-- After a conversation where new information surfaces, store it with `kybernesis-remember` so future `recall` queries find it.
+- After a conversation where new information surfaces, store it with `arcana-remember` so future `recall` queries find it.

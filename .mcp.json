@@ -1,12 +1,8 @@
 {
   "mcpServers": {
-    "kybernesis": {
-      "type": "http",
-      "url": "https://mcp.arcana.kybernesis.ai/mcp",
-      "headers": {
-        "Authorization": "Bearer ${KYBERNESIS_API_KEY}",
-        "X-Kyberagent-Agent": "${KYBERNESIS_WORKSPACE}"
-      }
+    "arcana": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/bin/mcp-proxy.mjs"]
     }
   }
 }

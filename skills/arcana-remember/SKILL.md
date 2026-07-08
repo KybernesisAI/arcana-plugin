@@ -1,7 +1,7 @@
 ---
-name: kybernesis-remember
+name: arcana-remember
 description: "Persist important information from this conversation to long-term memory. Use proactively whenever the user mentions a person, project, company, decision, meeting, deadline, preference, or any fact that future sessions should know about. Also use when the user says remember this, store this, note this, keep track of, or don't forget."
-allowed-tools: mcp__kybernesis__kybernesis_remember
+allowed-tools: mcp__arcana__kybernesis_remember
 ---
 
 # Remember
@@ -128,5 +128,5 @@ If the user says something is wrong but doesn't provide a replacement, acknowled
 
 ## Notes
 
-- Memories are searchable via the `kybernesis-recall`, `kybernesis-search`, and `kybernesis-timeline` skills.
-- This skill complements (not replaces) updating SOUL.md / USER.md / HEARTBEAT.md / brain notes. Use the `kybernesis-brain-note` skill for long-form documents. Use `remember` for the event/fact stream.
+- Memories are searchable via the `arcana-recall` skill (which covers entity recall, semantic search, and the timeline).
+- This skill complements (not replaces) updating SOUL.md / USER.md / HEARTBEAT.md / brain notes. Use the `arcana-brain-note` skill for long-form documents. Use `remember` for the event/fact stream.

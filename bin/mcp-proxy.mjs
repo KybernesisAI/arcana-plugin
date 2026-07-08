@@ -1,17 +1,19 @@
 #!/usr/bin/env node
 
 /**
- * Kybernesis MCP Proxy — stdio-to-HTTP bridge
+ * Arcana MCP Proxy — stdio-to-HTTP bridge
  *
  * Bridges Claude Desktop/Code (stdio transport) to the remote
- * Kybernesis MCP server (Streamable HTTP transport).
+ * Arcana MCP server (Streamable HTTP transport).
  *
- * API key resolution order:
- *   1. KYBERNESIS_API_KEY environment variable
- *   2. ~/.kybernesis/api-key file
+ * Credential resolution order (key and workspace independently):
+ *   1. ARCANA_API_KEY / ARCANA_WORKSPACE environment variables
+ *   2. KYBERNESIS_API_KEY / KYBERNESIS_WORKSPACE (legacy env names)
+ *   3. ~/.arcana/api-key and ~/.arcana/workspace files
+ *   4. ~/.kybernesis/api-key and ~/.kybernesis/workspace (legacy paths)
  *
- * If neither is found, the proxy starts but returns auth errors,
- * prompting the user to run /kybernesis-setup.
+ * If nothing is found, the proxy starts but returns auth errors,
+ * prompting the user to run /arcana-setup.
  */
 
 import { createInterface } from 'readline';
@@ -19,12 +21,10 @@ import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { homedir } from 'os';
 
-const MCP_SERVER_URL = process.env.MCP_SERVER_URL || 'https://mcp.arcana.kybernesis.ai/mcp';
-const API_KEY_FILE = join(homedir(), '.kybernesis', 'api-key');
-const WORKSPACE_FILE = join(homedir(), '.kybernesis', 'workspace');
+const MCP_SERVER_URL =
+  process.env.ARCANA_MCP_URL || process.env.MCP_SERVER_URL || 'https://mcp.arcana.kybernesis.ai/mcp';
 
-function resolveFromEnvOrFile(envVar, filePath) {
-  if (process.env[envVar]) return process.env[envVar];
+function fileValue(filePath) {
   if (existsSync(filePath)) {
     try {
       const v = readFileSync(filePath, 'utf-8').trim();
@@ -36,8 +36,18 @@ function resolveFromEnvOrFile(envVar, filePath) {
   return null;
 }
 
-const API_KEY = resolveFromEnvOrFile('KYBERNESIS_API_KEY', API_KEY_FILE);
-const WORKSPACE = resolveFromEnvOrFile('KYBERNESIS_WORKSPACE', WORKSPACE_FILE);
+function resolveCred(envVars, filename) {
+  for (const envVar of envVars) {
+    if (process.env[envVar]) return process.env[envVar];
+  }
+  return (
+    fileValue(join(homedir(), '.arcana', filename)) ??
+    fileValue(join(homedir(), '.kybernesis', filename))
+  );
+}
+
+const API_KEY = resolveCred(['ARCANA_API_KEY', 'KYBERNESIS_API_KEY'], 'api-key');
+const WORKSPACE = resolveCred(['ARCANA_WORKSPACE', 'KYBERNESIS_WORKSPACE'], 'workspace');
 
 const rl = createInterface({
   input: process.stdin,
@@ -48,15 +58,18 @@ const rl = createInterface({
 let sessionId = null;
 
 async function forwardMessage(message) {
+  const isNotification = !('id' in message);
+
   if (!API_KEY || !WORKSPACE) {
+    if (isNotification) return null;
     return {
       jsonrpc: '2.0',
       id: message.id,
       error: {
         code: -32603,
         message:
-          'Arcana credentials not found. Run /kybernesis-setup to authenticate, ' +
-          'or set KYBERNESIS_API_KEY and KYBERNESIS_WORKSPACE environment variables.',
+          'Arcana credentials not found. Run /arcana-setup to authenticate, ' +
+          'or set ARCANA_API_KEY and ARCANA_WORKSPACE environment variables.',
       },
     };
   }
@@ -86,6 +99,7 @@ async function forwardMessage(message) {
 
     if (!response.ok) {
       const errorText = await response.text();
+      if (isNotification) return null;
       process.stderr.write(`HTTP ${response.status}: ${errorText}\n`);
 
       if (response.status === 401) {
@@ -96,7 +110,7 @@ async function forwardMessage(message) {
             code: -32603,
             message:
               'Arcana API key is invalid or expired. ' +
-              'Get a new key at https://arcana.kybernesis.ai/settings/api-keys and run /kybernesis-setup.',
+              'Get a new key at https://arcana.kybernesis.ai/settings/api-keys and run /arcana-setup.',
           },
         };
       }
@@ -113,6 +127,11 @@ async function forwardMessage(message) {
 
     const contentType = response.headers.get('content-type') || '';
     const text = await response.text();
+
+    // Notifications get a 202 with an empty body — nothing to parse.
+    if (isNotification || text.trim() === '') {
+      return null;
+    }
 
     // Handle SSE response format
     if (contentType.includes('text/event-stream') || text.includes('event:')) {
@@ -156,6 +175,7 @@ async function forwardMessage(message) {
       };
     }
   } catch (error) {
+    if (isNotification) return null;
     process.stderr.write(`Error forwarding message: ${error.message}\n`);
     return {
       jsonrpc: '2.0',
@@ -176,7 +196,7 @@ rl.on('line', async (line) => {
     }
 
     const response = await forwardMessage(message);
-    console.log(JSON.stringify(response));
+    if (response) console.log(JSON.stringify(response));
   } catch (error) {
     process.stderr.write(`Error processing line: ${error.message}\n`);
   }
@@ -189,4 +209,4 @@ rl.on('close', () => {
 process.on('SIGINT', () => process.exit(0));
 process.on('SIGTERM', () => process.exit(0));
 
-process.stderr.write(`Kybernesis MCP proxy started | server=${MCP_SERVER_URL} | auth=${API_KEY ? 'yes' : 'MISSING'}\n`);
+process.stderr.write(`Arcana MCP proxy started | server=${MCP_SERVER_URL} | auth=${API_KEY ? 'yes' : 'MISSING'}\n`);
