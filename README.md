@@ -39,10 +39,10 @@ Select **arcana** → **Authenticate**. A browser window opens: sign in at `arca
 **4. Verify:**
 
 ```
-/arcana-setup
+/arcana:setup
 ```
 
-This checks the connection by calling `kybernesis_validate` and reports which workspace you're connected to.
+This checks the connection by calling `arcana_validate` and reports which workspace you're connected to.
 
 From the shell instead of inside a session, steps 1–3 are:
 
@@ -104,21 +104,21 @@ Raw HTTP also works with a key: send `Authorization: Bearer kb_live_…` **and**
 
 | Skill | Fires when | Does |
 |---|---|---|
-| `arcana-remember` | you state facts, decisions, people, deadlines, preferences | stores to timeline + entity graph + fact store + embeddings |
-| `arcana-recall` | you ask about a person, project, company, topic, or the past | entity recall, hybrid semantic search, timeline queries |
-| `arcana-brain-note` | you share long-form knowledge (decisions, research, meeting notes) | writes a readable `brain/*.md` note **and** indexes it |
+| `arcana:remember` | you state facts, decisions, people, deadlines, preferences | stores to timeline + entity graph + fact store + embeddings |
+| `arcana:recall` | you ask about a person, project, company, topic, or the past | entity recall, hybrid semantic search, timeline queries |
+| `arcana:brain-note` | you share long-form knowledge (decisions, research, meeting notes) | writes a readable `brain/*.md` note **and** indexes it |
 
 ### Command
 
-- `/arcana-setup` — checks/repairs the connection and walks through authentication.
+- `/arcana:setup` — checks/repairs the connection and walks through authentication.
 
 ### MCP tools
 
-Canonical tool names keep the `kybernesis_` prefix (a stable wire contract shared with KyberAgent local):
+Canonical tool names use the `arcana_` prefix:
 
-`kybernesis_remember`, `kybernesis_recall`, `kybernesis_search`, `kybernesis_timeline`, `kybernesis_brain_query`, `kybernesis_brain_add`, `kybernesis_brain_list`, `kybernesis_brain_read`, `kybernesis_brain_write`, `kybernesis_brain_stats`, `kybernesis_pin_entity`, `kybernesis_unpin_entity`, `kybernesis_list_workspaces`, `kybernesis_validate`
+`arcana_remember`, `arcana_recall`, `arcana_search`, `arcana_timeline`, `arcana_brain_query`, `arcana_brain_add`, `arcana_brain_list`, `arcana_brain_read`, `arcana_brain_write`, `arcana_brain_stats`, `arcana_pin_entity`, `arcana_unpin_entity`, `arcana_list_workspaces`, `arcana_validate`
 
-Deprecated v1 aliases (`kybernesis_add_memory`, `kybernesis_search_memory`, `kybernesis_list_memories`, `kybernesis_get_stats`) keep working during the 90-day migration window.
+All previous names keep working as deprecated aliases during the 90-day migration window: the pre-rename `kybernesis_remember` … `kybernesis_validate` set, plus the v1 surface (`kybernesis_add_memory`, `kybernesis_search_memory`, `kybernesis_list_memories`, `kybernesis_get_stats`).
 
 ---
 
