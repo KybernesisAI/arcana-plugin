@@ -64,6 +64,55 @@ Claude Desktop doesn't run Claude Code plugins, but it speaks the same MCP proto
 
 You get all the memory tools (see below). The three bundled skills are Claude Code-only; in Desktop, just ask naturally ("remember this…", "what do you know about…") and Claude will use the tools.
 
+#### Make Desktop use Arcana every turn (recommended)
+
+Out of the box, Claude Desktop sometimes reaches for its built-in memory or past-conversation search instead of Arcana. To make it query and store to Arcana reliably, create a **Project** and paste this into the Project's **Instructions** (Set custom instructions on the project page):
+
+> This project uses **Arcana** (the connected MCP server) as its persistent, cross-tool memory. Use it **alongside** your built-in memory and past-conversation search — they complement each other. Your own memory covers what happened in our chats; Arcana also holds what I've stored from other tools (Claude Code, KyberAgent, other devices). Apply these rules on **every turn**:
+>
+> **Recall — Arcana is always one of your sources:**
+> - Any mention of a person, company, project, or topic where background matters → call `arcana_recall` with the entity name, in addition to whatever your own memory tells you.
+> - Broader questions about the past ("what do you know about…", "what did we decide…", "have we discussed…") → call `arcana_search` with the question, and combine it with past-conversation search if that helps.
+> - "What happened today / this week / recently?" → `arcana_timeline`.
+> - Merge what both sources return into one answer; if they conflict, prefer Arcana for facts and note the discrepancy. Never answer a memory question without having queried Arcana that turn.
+>
+> **Remember — proactively, without being asked:**
+> - I state a fact worth keeping (a person + their role, a decision, a preference, a deadline, a project update) → call `arcana_remember` immediately. Compose the memory as one self-contained sentence with names and dates. Your own memory of the chat is not enough — Arcana is what my other tools see.
+> - I say "remember", "note this", "keep track of", "don't forget" → `arcana_remember`, always — never just acknowledge in chat.
+> - I share long-form content (meeting notes, research, a decision with rationale) → `arcana_brain_write` to save a readable markdown note, then `arcana_brain_add` with the same content and `source_path: "brain/<filename>.md"` to index it.
+>
+> **Never:**
+> - Answer a memory question with only past-conversation search when Arcana hasn't been queried yet this turn.
+> - Store greetings, mechanical requests, or something already stored in this conversation.
+> - Skip a failed tool call silently — if Arcana errors with an authentication problem, tell me to reconnect the Arcana connector.
+
+The same block works in claude.ai web Projects.
+
+#### Same idea in Claude Code: CLAUDE.md
+
+In Claude Code the plugin's skills already encode this behavior — `arcana:remember` and `arcana:recall` fire proactively on the same triggers. If you want it reinforced on every turn (or you work in repos where skills sometimes don't fire), add this to your project's `CLAUDE.md`, or to `~/.claude/CLAUDE.md` to apply in every project:
+
+```markdown
+## Arcana memory
+
+Arcana (the `arcana` MCP server) is my persistent, cross-tool memory. Use it
+alongside your other context sources on every turn:
+
+- When I mention a person, company, project, or topic where background matters,
+  call `arcana_recall` (entity) or `arcana_search` (broader question) before
+  answering. For "what happened recently", use `arcana_timeline`.
+- When I state a fact worth keeping — a person + role, a decision, a preference,
+  a deadline, a project update — call `arcana_remember` immediately, as one
+  self-contained sentence with names and dates. Always when I say "remember",
+  "note this", or "don't forget".
+- For long-form content (meeting notes, research, decisions with rationale),
+  save a note with `arcana_brain_write`, then index it with `arcana_brain_add`
+  (same content, `source_path: "brain/<filename>.md"`).
+- Don't store greetings, mechanical requests, or duplicates. If Arcana returns
+  an authentication error, tell me to re-authenticate via /mcp — don't skip it
+  silently.
+```
+
 ### claude.ai (web)
 
 Same idea as Desktop: **Customize → Connectors → + (Add custom connector)** with URL `https://mcp.arcana.kybernesis.ai/mcp`, then **Connect** and complete the browser sign-in.
