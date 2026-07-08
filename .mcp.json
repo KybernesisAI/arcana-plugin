@@ -1,8 +1,8 @@
 {
   "mcpServers": {
     "arcana": {
-      "command": "node",
-      "args": ["${CLAUDE_PLUGIN_ROOT}/bin/mcp-proxy.mjs"]
+      "type": "http",
+      "url": "https://mcp.arcana.kybernesis.ai/mcp"
     }
   }
 }
