@@ -1,14 +1,14 @@
 ---
-name: arcana-brain-note
+name: brain-note
 description: "Save long-form knowledge, research findings, architecture decisions, reference material, or structured notes to the workspace brain for persistent retrieval. Use when the user shares detailed information that doesn't fit a single memory, discusses architecture or design decisions, provides reference material, shares meeting notes or research, or says save this to the brain, write this down, document this, or take notes on."
-allowed-tools: mcp__arcana__kybernesis_brain_list, mcp__arcana__kybernesis_brain_read, mcp__arcana__kybernesis_brain_write, mcp__arcana__kybernesis_brain_add, mcp__arcana__kybernesis_remember
+allowed-tools: mcp__arcana__arcana_brain_list, mcp__arcana__arcana_brain_read, mcp__arcana__arcana_brain_write, mcp__arcana__arcana_brain_add, mcp__arcana__arcana_remember
 ---
 
 # Brain Note
 
-Persists structured, long-form knowledge to the workspace's `brain/` directory as a readable markdown file AND indexes it into the full pipeline. While `arcana-remember` captures individual facts and events into the timeline + entity graph + fact store, `arcana-brain-note` is for richer content that benefits from being a readable document — architecture decisions, research findings, meeting notes, reference material, project context.
+Persists structured, long-form knowledge to the workspace's `brain/` directory as a readable markdown file AND indexes it into the full pipeline. While `arcana:remember` captures individual facts and events into the timeline + entity graph + fact store, `arcana:brain-note` is for richer content that benefits from being a readable document — architecture decisions, research findings, meeting notes, reference material, project context.
 
-Both halves matter: the file (`kybernesis_brain_write`) is what shows up in `/brain/notes`, the web console, and the KyberAgent mirror; the index (`kybernesis_brain_add`) is what makes it discoverable via semantic search, entities, and the timeline. Doing only one leaves the note half-invisible.
+Both halves matter: the file (`arcana_brain_write`) is what shows up in `/brain/notes`, the web console, and the KyberAgent mirror; the index (`arcana_brain_add`) is what makes it discoverable via semantic search, entities, and the timeline. Doing only one leaves the note half-invisible.
 
 ## When to Fire
 
@@ -22,7 +22,7 @@ Both halves matter: the file (`kybernesis_brain_write`) is what shows up in `/br
 - The user explicitly asks to document or write something down
 
 **Don't write a brain note for:**
-- Single facts or events — use `arcana-remember` instead
+- Single facts or events — use `arcana:remember` instead
 - Information about the user — update USER.md instead (via the web console's living-docs editor)
 - Information about the agent's identity — update SOUL.md instead
 
@@ -42,10 +42,10 @@ reference-api-endpoints.md
 Check what already exists before creating a new file:
 
 ```
-kybernesis_brain_list({ source: "brain" })
+arcana_brain_list({ source: "brain" })
 ```
 
-If a relevant file already exists, **append** to it rather than creating a new one: read it with `kybernesis_brain_read({ name: "<filename>.md" })`, add your new section to the end, and write the combined content back.
+If a relevant file already exists, **append** to it rather than creating a new one: read it with `arcana_brain_read({ name: "<filename>.md" })`, add your new section to the end, and write the combined content back.
 
 ### Step 2: Compose and Write the File
 
@@ -82,7 +82,7 @@ Structure for **research/reference**:
 Write the file:
 
 ```
-kybernesis_brain_write({
+arcana_brain_write({
   name: "architecture-decisions.md",
   content: "## Frontend Framework Choice — 2026-05-21\n\n**Context**: ...\n**Decision**: Next.js with App Router\n**Rationale**: ..."
 })
@@ -90,10 +90,10 @@ kybernesis_brain_write({
 
 ### Step 3: Index It
 
-Call `kybernesis_brain_add` with the same markdown content, a descriptive title, and `source_path` pointing at the file you just wrote. This runs the full pipeline: chunks the content → embeddings (1536-dim) → entity extraction → fact extraction → timeline event with `type: "note"`. When appending to an existing file, index only the new section — not the whole file again.
+Call `arcana_brain_add` with the same markdown content, a descriptive title, and `source_path` pointing at the file you just wrote. This runs the full pipeline: chunks the content → embeddings (1536-dim) → entity extraction → fact extraction → timeline event with `type: "note"`. When appending to an existing file, index only the new section — not the whole file again.
 
 ```
-kybernesis_brain_add({
+arcana_brain_add({
   content: "## Frontend Framework Choice — 2026-05-21\n\n**Context**: ...\n**Decision**: Next.js with App Router\n**Rationale**: ...",
   title: "Frontend framework choice — Next.js App Router",
   type: "note",
@@ -111,11 +111,11 @@ Tell the user the note was saved. Mention the filename and title.
 
 **Architecture decision discussed:**
 ```
-kybernesis_brain_write({
+arcana_brain_write({
   name: "architecture-decisions.md",
   content: "## Frontend Framework Choice — 2026-05-21\n\n**Context**: Needed to choose a framework for the new dashboard\n**Decision**: Next.js with App Router\n**Rationale**: SSR support, team familiarity, strong ecosystem\n**Alternatives considered**: Remix (less mature), SvelteKit (team unfamiliar)\n**Implications**: Lock into React ecosystem, need to learn App Router patterns"
 })
-kybernesis_brain_add({
+arcana_brain_add({
   content: "## Frontend Framework Choice — 2026-05-21\n\n**Context**: Needed to choose a framework for the new dashboard\n**Decision**: Next.js with App Router\n**Rationale**: SSR support, team familiarity, strong ecosystem\n**Alternatives considered**: Remix (less mature), SvelteKit (team unfamiliar)\n**Implications**: Lock into React ecosystem, need to learn App Router patterns",
   title: "Frontend framework — Next.js App Router",
   type: "note",
@@ -125,11 +125,11 @@ kybernesis_brain_add({
 
 **Research findings shared:**
 ```
-kybernesis_brain_write({
+arcana_brain_write({
   name: "kubernetes-migration-research.md",
   content: "# Kubernetes Migration Research — 2026-05-21\n\n## Current State\nRunning on bare EC2 instances with manual deploys...\n\n## Findings\n..."
 })
-kybernesis_brain_add({
+arcana_brain_add({
   content: "# Kubernetes Migration Research — 2026-05-21\n\n## Current State\nRunning on bare EC2 instances with manual deploys...\n\n## Findings\n...",
   title: "Kubernetes migration research",
   type: "note",
@@ -140,7 +140,7 @@ kybernesis_brain_add({
 ## Notes
 
 - Brain notes are BOTH a file in `brain/` (visible in `/brain/notes`, the web console, and the KyberAgent mirror) and fully indexed (embedded for semantic search, summarized into timeline + entity graph).
-- Notes are searchable via the `arcana-recall` skill and `kybernesis_brain_query`, and readable via `kybernesis_brain_read`.
-- Use `arcana-remember` for the event/fact stream, `arcana-brain-note` for the knowledge base. They complement each other.
+- Notes are searchable via the `arcana:recall` skill and `arcana_brain_query`, and readable via `arcana_brain_read`.
+- Use `arcana:remember` for the event/fact stream, `arcana:brain-note` for the knowledge base. They complement each other.
 - Keep notes focused. One topic per note is better than one giant note.
 - Always include dates so future sessions know when information was captured.

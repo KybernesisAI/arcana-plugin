@@ -1,6 +1,6 @@
 ---
 description: Connect your Arcana cloud brain workspace (OAuth sign-in) and verify the connection.
-allowed-tools: Bash(curl:*), mcp__arcana__kybernesis_validate, AskUserQuestion
+allowed-tools: Bash(curl:*), mcp__arcana__arcana_validate, AskUserQuestion
 ---
 
 # Arcana Setup
@@ -11,7 +11,7 @@ Arcana authenticates with **OAuth — no API keys to copy**. Claude discovers th
 
 ### 1. Check whether the connection already works
 
-Call the `kybernesis_validate` MCP tool (no arguments).
+Call the `arcana_validate` MCP tool (no arguments).
 
 - If it returns `ok: true` with a workspace, tell the user they're connected and to which workspace. Done.
 - If the tool call fails with an authentication error, or the `arcana` MCP server shows as disconnected / needs authentication, continue.
@@ -27,7 +27,7 @@ The browser flow is: sign in to arcana.kybernesis.ai → approve the connection 
 
 ### 3. Verify
 
-Call `kybernesis_validate` again. If it returns `ok: true`, tell the user:
+Call `arcana_validate` again. If it returns `ok: true`, tell the user:
 
 - They're connected to Arcana and which workspace
 - They can now say things like "remember this", "what do you know about X", "search my memories"

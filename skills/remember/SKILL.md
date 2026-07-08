@@ -1,14 +1,14 @@
 ---
-name: arcana-remember
+name: remember
 description: "Persist important information from this conversation to long-term memory. Use proactively whenever the user mentions a person, project, company, decision, meeting, deadline, preference, or any fact that future sessions should know about. Also use when the user says remember this, store this, note this, keep track of, or don't forget."
-allowed-tools: mcp__arcana__kybernesis_remember
+allowed-tools: mcp__arcana__arcana_remember
 ---
 
 # Remember
 
 Stores information into the workspace brain's full memory pipeline — the same pipeline used by KyberAgent local for terminal, Telegram, WhatsApp, and heartbeat. Without this skill, conversations vanish when the session ends.
 
-The `kybernesis_remember` MCP tool feeds the same `storeConversation()` pipeline as messaging channels:
+The `arcana_remember` MCP tool feeds the same `storeConversation()` pipeline as messaging channels:
 - **Timeline** — temporal event index
 - **Entity Graph** — people, companies, projects, and their relationships
 - **Fact Store** — structured facts with categories, confidence, and temporal expiry
@@ -42,7 +42,7 @@ Bad: "Had a meeting about stuff"
 
 ### Step 2: Call the Tool
 
-Call `kybernesis_remember` with at minimum `text`. Include `response` if there's a natural pair (e.g. user prompt + system reply). The `channel` parameter defaults to `chat` (confidence 0.85). For direct user statements in a terminal-shell-style flow, set `channel: 'terminal'` (confidence 0.95).
+Call `arcana_remember` with at minimum `text`. Include `response` if there's a natural pair (e.g. user prompt + system reply). The `channel` parameter defaults to `chat` (confidence 0.85). For direct user statements in a terminal-shell-style flow, set `channel: 'terminal'` (confidence 0.95).
 
 ### Step 2b: Tag the Memory (when context is clear)
 
@@ -66,14 +66,14 @@ Briefly acknowledge to the user that the information has been stored. A simple "
 
 **Person mentioned (no project context):** User says "I talked to Jake from the infra team about migrating to Kubernetes"
 ```
-kybernesis_remember({
+arcana_remember({
   text: "Talked to Jake from the infra team about migrating to Kubernetes"
 })
 ```
 
 **Decision in a named project:** User says "For project alpha, let's go with Next.js for the frontend"
 ```
-kybernesis_remember({
+arcana_remember({
   text: "Decision: using Next.js for the frontend",
   response: "Chosen over Remix and SvelteKit",
   project: "alpha"
@@ -82,7 +82,7 @@ kybernesis_remember({
 
 **Meeting notes scoped to a project:**
 ```
-kybernesis_remember({
+arcana_remember({
   text: "Weekly sync with product team — discussed Q2 roadmap, prioritized auth overhaul and dashboard redesign",
   response: "Auth overhaul starts March 1, dashboard redesign in April. Sarah leading auth, Mike on dashboard.",
   project: "q2-launch",
@@ -92,7 +92,7 @@ kybernesis_remember({
 
 **Sensitive content:**
 ```
-kybernesis_remember({
+arcana_remember({
   text: "Acme Corp contract: $250K/year, auto-renews 2027-01-01",
   project: "acme-deal",
   classification: "confidential"
@@ -101,7 +101,7 @@ kybernesis_remember({
 
 **PII (highest sensitivity tier):**
 ```
-kybernesis_remember({
+arcana_remember({
   text: "Sarah's home address is 123 Maple St",
   classification: "pii"
 })
@@ -118,8 +118,8 @@ When the user says things like:
 
 Treat this as a correction:
 
-1. Call `kybernesis_recall` with the entity name to see what's currently known
-2. Store the **correct** fact with `kybernesis_remember` — the contradiction detection system will automatically supersede the old, lower-confidence fact
+1. Call `arcana_recall` with the entity name to see what's currently known
+2. Store the **correct** fact with `arcana_remember` — the contradiction detection system will automatically supersede the old, lower-confidence fact
 3. Confirm briefly: "Corrected."
 
 The memory system uses source confidence weighting — corrections stored from a terminal-style direct interaction get 0.95 confidence, which is higher than chat (0.85) or AI-extracted (0.60). A correction will naturally take precedence.
@@ -128,5 +128,5 @@ If the user says something is wrong but doesn't provide a replacement, acknowled
 
 ## Notes
 
-- Memories are searchable via the `arcana-recall` skill (which covers entity recall, semantic search, and the timeline).
-- This skill complements (not replaces) updating SOUL.md / USER.md / HEARTBEAT.md / brain notes. Use the `arcana-brain-note` skill for long-form documents. Use `remember` for the event/fact stream.
+- Memories are searchable via the `arcana:recall` skill (which covers entity recall, semantic search, and the timeline).
+- This skill complements (not replaces) updating SOUL.md / USER.md / HEARTBEAT.md / brain notes. Use the `arcana:brain-note` skill for long-form documents. Use `remember` for the event/fact stream.
